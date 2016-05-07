@@ -1,52 +1,49 @@
 package task3;
 
 import java.io.BufferedReader;
-import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import org.junit.*;
-
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
-
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.Select;
 
 public class TestCase5 {
     private WebDriver driver;
     private String baseUrl;
     private boolean acceptNextAlert = true;
     private StringBuffer verificationErrors = new StringBuffer();
-    private String login;
-    private String pass;
+    private List<String> data;
 
     @Before
     public void setUp() throws Exception {
         driver = new FirefoxDriver();
         baseUrl = "http://demosite.center/";
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-        try (BufferedReader reader = Files.newBufferedReader()) {
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
+        data = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Yermolenko\\IdeaProjects\\TestSuits\\src\\resources\\data.txt")))
+        {
+            String str = new String();
+            Integer i = 0;
+            while ((str = br.readLine()) != null) {
+                data.set(i++, str);
             }
-        } catch (IOException x) {
-            System.err.format("IOException: %s%n", x);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
     }
 
     @Test
     public void testCase5() throws Exception {
         driver.get(baseUrl + "/wordpress/wp-login.php");
         driver.findElement(By.id("user_login")).clear();
-        driver.findElement(By.id("user_login")).sendKeys("admin");
+        driver.findElement(By.id("user_login")).sendKeys(data.get(0));
         driver.findElement(By.id("user_pass")).clear();
-        driver.findElement(By.id("user_pass")).sendKeys("demo123");
+        driver.findElement(By.id("user_pass")).sendKeys(data.get(1));
         driver.findElement(By.id("wp-submit")).click();
         // Warning: verifyTextPresent may require manual changes
         try {
